@@ -141,16 +141,186 @@ cp ~/opencode/Leeway/src/tools/workflow.ts ~/opencode/grap/src/
 cp -r ~/opencode/Leeway/.leeway ~/opencode/grap/
 ```
 
+**`.leeway/` 目錄包含以下內容**：
+
+| 目錄/檔案 | 說明 |
+|----------|------|
+| `.leeway/workflows/` | Workflow YAML 定義 |
+| `.leeway/skills/` | **Skills 定義（讓 AI 知道如何使用工具）** |
+| `.leeway/settings.json` | 設定檔 |
+| `.leeway/crontab.json` | Cron 排程 |
+| `.leeway/hooks.json` | Hooks |
+
+**可用的 Workflows**：
+
+| Workflow | 用途 |
+|----------|------|
+| `code-health` | 代碼結構掃描、分類、審查、報告 |
+| `api-design` | API 設計審查、文件生成 |
+| `pr-review` | Pull Request 審查 |
+| `security-scan` | 安全漏洞掃描 |
+| `github-search` | GitHub 搜尋（MCP）|
+| `research-assistant` | 多來源研究（MCP）|
+
 #### 步驟 4：驗證複製結果
 
 ```bash
 ls -la ~/opencode/grap/src/workflow*.ts
 ls -la ~/opencode/grap/.leeway/
+ls -la ~/opencode/grap/.leeway/workflows/
+ls -la ~/opencode/grap/.leeway/skills/
 ```
 
-#### 步驟 5：更新設定檔
+#### 步驟 5：安裝 Skills（重要！讓 AI 知道如何使用工具）
 
-編輯 `~/opencode/grap/.leeway/settings.json`，使用 llama.cpp server：
+**為什麼需要安裝 Skills**：
+
+`.leeway/skills/` 目錄包含 **OpenCode AI 使用的 Skills**，這些 skill 會在每次對話開啟時被載入，讓 AI 知道：
+
+1. **何時應該使用 workflow 工具**（`workflow-handler`）
+2. **如何正確使用各個 workflow**
+3. **遵循什麼樣的 coding standards**
+4. **Code review 的檢查清單**（`code-review`）
+5. **安全審計的 OWASP 參考**（`security-audit`）
+
+**如果不安裝 Skills**：AI 將不知道如何使用這套工具，不知道什麼時候該呼叫 workflow。
+
+**已安裝的 Skills**（位於 `.leeway/skills/`）：
+
+| Skill | 對應 Workflow | 說明 |
+|-------|--------------|------|
+| `workflow-handler` | - | **Meta-skill，告訴 LLM 何時使用 workflow** |
+| `code-health` | `code-health` | 代碼健康檢查指南 |
+| `api-design` | `api-design` | API 設計審查規範 |
+| `pr-review` | `pr-review` | PR 審查清單 |
+| `security-scan` | `security-scan` | 漏洞掃描指南 |
+| `github-search` | `github-search` | GitHub 搜尋技巧 |
+| `research-assistant` | `research-assistant` | 多來源研究方法 |
+| `code-review` | - | 代碼審查清單 |
+| `coding-standards` | - | 代碼編碼標準 |
+| `security-audit` | - | 安全審計指南 |
+
+**每個 Skill 的詳細內容**：
+
+##### workflow-handler（Meta-skill）
+```
+.leeway/skills/workflow-handler/
+└── SKILL.md     # 告訴 LLM 何時、如何使用 workflow 工具
+```
+- 定義何時應該使用 workflow 工具
+- 定義如何建構 workflow 參數
+- 定義如何解讀 workflow 結果
+
+##### code-health
+```
+.leeway/skills/code-health/
+└── SKILL.md     # 代碼健康檢查指南
+```
+- 代碼結構掃描
+- 程式碼分類
+- 審查與報告生成
+
+##### api-design
+```
+.leeway/skills/api-design/
+└── SKILL.md     # API 設計審查規範
+```
+- RESTful API 設計原則
+- 請求/回應格式規範
+- 錯誤處理設計
+
+##### pr-review
+```
+.leeway/skills/pr-review/
+└── SKILL.md     # PR 審查清單
+```
+- PR 描述檢查
+- 變更範圍評估
+- 測試覆蓋率檢查
+
+##### security-scan
+```
+.leeway/skills/security-scan/
+└── SKILL.md     # 漏洞掃描指南
+```
+- 常見漏洞類型
+- 掃描策略
+- 漏洞修復建議
+
+##### github-search
+```
+.leeway/skills/github-search/
+└── SKILL.md     # GitHub 搜尋技巧
+```
+- GitHub Code Search 語法
+- 搜尋範例與技巧
+- 結果解讀
+
+##### research-assistant
+```
+.leeway/skills/research-assistant/
+└── SKILL.md     # 多來源研究方法
+```
+- 資訊收集策略
+- 來源驗證
+- 摘要與整理
+
+##### code-review
+```
+.leeway/skills/code-review/
+├── SKILL.md              # Code review 檢查清單
+└── references/
+    └── checklist.md     # 詳細檢查清單
+```
+- 正確性：邏輯正確、邊緣情況處理
+- 安全性：無漏洞、輸入驗證
+- 效能：資料結構優化
+- 風格：coding standards、命名、文件
+
+##### coding-standards
+```
+.leeway/skills/coding-standards/
+└── SKILL.md     # 代碼標準與最佳實踐
+```
+- Python: Type hints, PEP 8, docstrings
+- TypeScript: Strict TypeScript, ESLint rules
+
+##### security-audit
+```
+.leeway/skills/security-audit/
+├── SKILL.md            # OWASP Top 10 檢查清單
+└── references/
+    └── owasp.md        # 完整的 OWASP Top 10 說明
+```
+- OWASP Top 10 (2021) 全部 10 類漏洞檢查
+- 輸入驗證模式
+- 認證與授權檢查
+- 資料保護與加密
+
+**為什麼需要 Skills**：
+- OpenCode 每次對話開啟時會載入 skill，讓 AI 知道這套工具的用法
+- 讓 AI 知道何時應該使用 `workflow` 工具（workflow-handler）
+- 讓 AI 知道如何正確使用各個 workflow
+- 讓 AI 知道遵循專案的 coding standards
+- 讓 AI 知道 code review 的檢查清單
+- 讓 AI 知道安全審計的 OWASP 參考
+
+**Skills 如何被 OpenCode 使用**：
+
+當 OpenCode 啟動對話時，會自動載入 `.leeway/skills/` 目錄下的所有 skill：
+
+1. **載入時機**：每次開啟新對話時，OpenCode 會讀取 `skills/` 目錄下的 `SKILL.md`
+2. **影響範圍**：載入後，AI 會自動應用這些規則到後續的程式碼生成和審查中
+3. **使用場景**：
+   - 當 AI 不知道是否該使用 workflow 時，會參考 `workflow-handler/SKILL.md`
+   - 當 AI 進行 code review 時，會參考 `code-review/SKILL.md` 和 `checklist.md`
+   - 當 AI 進行安全審計時，會參考 `security-audit/SKILL.md` 和 `owasp.md`
+   - 當 AI 生成程式碼時，會遵循 `coding-standards/SKILL.md` 的規範
+   - 當 AI 執行對應的 workflow 時，會參考該 workflow 專屬的 skill（如 `code-health/SKILL.md`）
+
+#### 步驟 6：更新設定檔
+
+編輯 `~/opencode/grap/.leeway/settings.json`：
 
 ```json
 {
@@ -163,33 +333,86 @@ ls -la ~/opencode/grap/.leeway/
   "max_turns": 50,
   "max_tokens": 16384,
   "verbose": false,
-  "llm_providers": {
-    "llama-cpp": {
-      "display_name": "Llama.cpp Server (Qwen3.5)",
-      "description": "Run GGUF models via llama.cpp server",
-      "api_key_env": "",
-      "default_model": "Qwen3.5-4B-UD-Q4_K_XL",
-      "base_url": "http://localhost:8080"
-    },
-    "anthropic": {
-      "display_name": "Anthropic Claude",
-      "api_key_env": "ANTHROPIC_API_KEY",
-      "default_model": "claude-3-5-sonnet-20241022"
-    }
+  "mcp_servers": {},
+  "llm_providers": {}
+}
+```
+
+**設定項說明**：
+
+| 項目 | 說明 | 範例值 |
+|------|------|--------|
+| `api_key` | API 金鑰（如使用本地模型則留空）| `""` |
+| `base_url` | LLM server URL | `http://localhost:8080` |
+| `model` | 模型名稱 | `Qwen3.5-4B-UD-Q4_K_XL` |
+| `permission_mode` | 權限模式 | `default`, `read-only`, `strict` |
+| `workflows_dir` | Workflow YAML 目錄 | `.leeway/workflows` |
+| `skills_dir` | Skills 目錄 | `.leeway/skills` |
+| `max_turns` | 最大對話回合數 | `50` |
+| `max_tokens` | 最大 token 數 | `16384` |
+| `verbose` | 詳細輸出 | `false` |
+| `llm_providers` | LLM providers 設定 | (見下文) |
+| `mcp_servers` | MCP 伺服器設定 | (見下文) |
+
+**LLM Providers**：
+
+```json
+"llm_providers": {
+  "llama-cpp": {
+    "display_name": "Llama.cpp Server",
+    "description": "Run GGUF models via llama.cpp server",
+    "api_key_env": "",
+    "default_model": "Qwen3.5-4B-UD-Q4_K_XL",
+    "base_url": "http://localhost:8080"
+  },
+  "anthropic": {
+    "display_name": "Anthropic Claude",
+    "description": "Claude 3.5 Sonnet, Opus, Haiku models",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "default_model": "claude-3-5-sonnet-20241022"
   }
 }
+```
+
+| Provider | 說明 | 環境變數 |
+|----------|------|----------|
+| `llama-cpp` | 本地 GGUF 模型（需自行啟動 server）| 無 |
+| `anthropic` | Anthropic Claude API | `ANTHROPIC_API_KEY` |
+
+**MCP Servers（可選）**：
+
+```json
+"mcp_servers": {
+  "github": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-github"],
+    "env": {
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+    }
+  },
+  "filesystem": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/wclin/project"]
+  }
+}
+```
+
+| Server | 用途 |
+|--------|------|
+| `github` | GitHub API 操作（PR、issue、搜尋）|
+| `filesystem` | 檔案系統存取 |
+
+**啟動 llama.cpp server（如使用本地模型）**：
+
+```bash
+# 下載模型：https://huggingface.co/unsloth/Qwen3.5-4B-GGUF
+./server -m Qwen3.5-4B-UD-Q4_K_XL.gguf -c 4096 -ngl 1 --port 8080
 ```
 
 **注意**：使用 llama.cpp server 時：
 - `api_key` 留空
 - `base_url` 設為 `http://localhost:8080`（llama.cpp server 預設端口）
 - `model` 設為您下載的 GGUF 模型名稱（如 `llama-7b`、`mistral-7b` 等）
-
-確保 llama.cpp server 已啟動：
-```bash
-# 啟動 llama.cpp server
-./server -m Qwen3.5-4B-UD-Q4_K_XL.gguf -c 4096 -ngl 1 --port 8080
-```
 
 ### 6.3 在 OpenCode 中使用
 
