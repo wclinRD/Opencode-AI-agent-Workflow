@@ -1,0 +1,195 @@
+{
+  "projects": [
+    {
+      "id": "test-workflow",
+      "name": "test-workflow",
+      "description": "Test workflow",
+      "content": "scan:\n  prompt: \"Scan\"\nedges:\n  - target: end\n    when:\n      always: true\nend:\n  prompt: \"End\"",
+      "created_at": "2026-04-22T09:38:07.866573Z",
+      "updated_at": "2026-04-22T09:38:07.866573Z",
+      "version": "1.0.0",
+      "nodes": [
+        {
+          "id": "node-44d6f737",
+          "type": "terminal",
+          "name": "scan",
+          "position": {
+            "x": 100,
+            "y": 0
+          },
+          "config": {
+            "prompt": "Scan",
+            "tools": [],
+            "skills": [],
+            "edges": [],
+            "parallel": null,
+            "requires_approval": false,
+            "max_turns": null,
+            "timeout": null,
+            "metadata": {}
+          },
+          "collapsed": false,
+          "color": null
+        },
+        {
+          "id": "node-34c8fb34",
+          "type": "terminal",
+          "name": "end",
+          "position": {
+            "x": 100,
+            "y": 150
+          },
+          "config": {
+            "prompt": "End",
+            "tools": [],
+            "skills": [],
+            "edges": [],
+            "parallel": null,
+            "requires_approval": false,
+            "max_turns": null,
+            "timeout": null,
+            "metadata": {}
+          },
+          "collapsed": false,
+          "color": null
+        }
+      ],
+      "edges": [],
+      "canvas": {
+        "zoom": 1.0,
+        "pan_x": 0,
+        "pan_y": 0,
+        "grid_size": 20,
+        "show_grid": true,
+        "snap_to_grid": true
+      },
+      "metadata": {
+        "author": null,
+        "description": null,
+        "tags": [],
+        "category": null,
+        "version": "1.0.0"
+      }
+    },
+    {
+      "id": "test-workflow2",
+      "name": "test-workflow2",
+      "description": "Test workflow",
+      "content": "scan:\n  prompt: \"Scan\"\nedges:\n  - target: end\n    when:\n      always: true\nend:\n  prompt: \"End\"",
+      "created_at": "2026-04-22T09:39:11.128724Z",
+      "updated_at": "2026-04-22T09:39:11.128724Z",
+      "version": "1.0.0",
+      "nodes": [
+        {
+          "id": "node-56f879a1",
+          "type": "terminal",
+          "name": "scan",
+          "position": {
+            "x": 100,
+            "y": 0
+          },
+          "config": {
+            "prompt": "Scan",
+            "tools": [],
+            "skills": [],
+            "edges": [],
+            "parallel": null,
+            "requires_approval": false,
+            "max_turns": null,
+            "timeout": null,
+            "metadata": {}
+          },
+          "collapsed": false,
+          "color": null
+        },
+        {
+          "id": "node-378823ce",
+          "type": "terminal",
+          "name": "end",
+          "position": {
+            "x": 100,
+            "y": 150
+          },
+          "config": {
+            "prompt": "End",
+            "tools": [],
+            "skills": [],
+            "edges": [],
+            "parallel": null,
+            "requires_approval": false,
+            "max_turns": null,
+            "timeout": null,
+            "metadata": {}
+          },
+          "collapsed": false,
+          "color": null
+        }
+      ],
+      "edges": [],
+      "canvas": {
+        "zoom": 1.0,
+        "pan_x": 0,
+        "pan_y": 0,
+        "grid_size": 20,
+        "show_grid": true,
+        "snap_to_grid": true
+      },
+      "metadata": {
+        "author": null,
+        "description": null,
+        "tags": [],
+        "category": null,
+        "version": "1.0.0"
+      }
+    },
+    {
+      "id": "json-rpc-test",
+      "name": "json-rpc-test",
+      "description": "Test workflow via JSON-RPC",
+      "content": "scan:\n  prompt: \"Scan\"",
+      "created_at": "2026-04-22T09:40:42.216549Z",
+      "updated_at": "2026-04-22T09:40:42.216549Z",
+      "version": "1.0.0",
+      "nodes": [
+        {
+          "id": "node-820805d7",
+          "type": "terminal",
+          "name": "scan",
+          "position": {
+            "x": 100,
+            "y": 0
+          },
+          "config": {
+            "prompt": "Scan",
+            "tools": [],
+            "skills": [],
+            "edges": [],
+            "parallel": null,
+            "requires_approval": false,
+            "max_turns": null,
+            "timeout": null,
+            "metadata": {}
+          },
+          "collapsed": false,
+          "color": null
+        }
+      ],
+      "edges": [],
+      "canvas": {
+        "zoom": 1.0,
+        "pan_x": 0,
+        "pan_y": 0,
+        "grid_size": 20,
+        "show_grid": true,
+        "snap_to_grid": true
+      },
+      "metadata": {
+        "author": null,
+        "description": null,
+        "tags": [],
+        "category": null,
+        "version": "1.0.0"
+      }
+    }
+  ]
+}

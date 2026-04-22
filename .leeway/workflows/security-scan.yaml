@@ -1,0 +1,95 @@
+# Security Scan Workflow
+# Performs automated security scanning of the codebase
+
+name: security-scan
+description: Scan codebase for security vulnerabilities and issues
+
+# Start by scanning for common vulnerabilities
+scan:
+  prompt: |
+    Scan {cwd} for common security vulnerabilities.
+    
+    Use grep to search for:
+    - Hardcoded passwords, API keys, tokens: "password=", "api_key=", "token="
+    - SQL injection patterns: "SELECT.*FROM.*%", "execute(", raw SQL
+    - Command injection: "system(", "subprocess", "popen"
+    - Eval usage: "eval(", "exec("
+    - Hardcoded URLs: "http://", "ftp://"
+    
+    Use glob to find:
+    - Config files that might contain secrets
+    - Environment file examples
+    - Certificate/key files
+    
+    Signal 'findings' when scan is complete.
+    
+  tools: [grep, glob, bash]
+  edges:
+    - target: analyze
+      when: { signal: findings }
+
+# Analyze findings
+analyze:
+  prompt: |
+    Analyze the security findings from the scan.
+    
+    Categorize by severity:
+    - Critical: Secrets in code, SQL injection, RCE
+    - High: XSS, CSRF, weak crypto
+    - Medium: Information disclosure, verbose errors
+    - Low: Code style issues
+    
+    Identify:
+    - False positives to exclude
+    - Real vulnerabilities to report
+    - Areas needing deeper investigation
+    
+    Signal 'has_critical' if critical issues found.
+    Signal 'moderate_only' if only medium/low issues.
+    Signal 'clean' if no issues found.
+    
+  tools: [grep, read_file]
+  edges:
+    - target: investigate
+      when: { signal: has_critical }
+    - target: report
+      when: { signal: moderate_only }
+    - target: report
+      when: { signal: clean }
+
+# Deep investigation for critical issues
+investigate:
+  prompt: |
+    Deep dive into critical security issues found.
+    
+    For each critical issue:
+    - Verify it is exploitable
+    - Find the root cause
+    - Identify affected code paths
+    - Suggest remediation
+    
+    Be thorough - false positives in security are common.
+    
+  tools: [read_file, grep, bash]
+  edges:
+    - target: report
+      when: { signal: done }
+
+# Generate security report
+report:
+  prompt: |
+    Generate a security report summarizing findings.
+    
+    Include:
+    - Executive summary
+    - Issues by severity
+    - File locations
+    - Remediation steps
+    
+    Format as Markdown with:
+    - Tables for easy scanning
+    - Code examples where relevant
+    - Priority ordering
+    
+  tools: [bash, read_file]
+  # no edges = terminal

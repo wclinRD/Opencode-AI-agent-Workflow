@@ -1,0 +1,60 @@
+# GitHub Code Search Workflow
+# Demonstrates MCP integration - searches GitHub for code patterns
+
+name: github-search
+description: Search GitHub repositories for code patterns using MCP
+
+# Start node - define search query
+start:
+  prompt: |
+    You are a GitHub code search agent.
+    
+    Your task is to search for code patterns across GitHub repositories
+    using the GitHub MCP server.
+    
+    Based on the user context: {user_context}
+    
+    First, list the available MCP tools from the github server.
+    Then, execute the appropriate search tool.
+    
+    Use the mcp_github_search tool to find relevant code.
+    
+    When done, signal 'search_complete' to proceed to review.
+    
+  edges:
+    - target: review
+      when: { signal: search_complete }
+
+# Review results
+review:
+  prompt: |
+    Review the search results you found.
+    
+    Analyze:
+    - Relevance to the original query
+    - Code quality indicators
+    - Common patterns or anti-patterns
+    
+    If more searches are needed, signal 'more_searches'.
+    If results are sufficient, signal 'done'.
+    
+  edges:
+    - target: start
+      when: { signal: more_searches }
+    - target: summarize
+      when: { signal: done }
+
+# Terminal node
+summarize:
+  prompt: |
+    Generate a summary of the GitHub search findings.
+    
+    Include:
+    - Number of results found
+    - Key patterns identified
+    - Relevant code snippets
+    - Recommendations
+    
+    Format as a markdown report.
+    
+  # no edges = terminal

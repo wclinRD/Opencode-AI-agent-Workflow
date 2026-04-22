@@ -1,0 +1,113 @@
+# PR Review Workflow
+# Analyzes pull request changes, generates review comments
+
+name: pr-review
+description: Review pull request changes and generate feedback
+
+# Start by gathering PR information
+gather:
+  prompt: |
+    Gather information about the pull request in {cwd}.
+    
+    Use bash to:
+    - Get git diff for the PR changes
+    - Get commit messages
+    - List changed files
+    
+    Also check:
+    - PR description or title
+    - Associated issues/tickets
+    - Test coverage changes
+    
+    Signal 'ready' when you have the full picture.
+    
+  tools: [bash, glob, read_file]
+  edges:
+    - target: analyze
+      when: { signal: ready }
+
+# Analyze the changes
+analyze:
+  prompt: |
+    Analyze the PR changes for quality and correctness.
+    
+    Check for:
+    - Logic correctness
+    - Edge cases
+    - Error handling
+    - Performance implications
+    
+    Security concerns:
+    - Input validation
+    - SQL injection risks
+    - XSS vulnerabilities
+    - Secrets exposure
+    
+    Signal 'needs_changes' if major issues found.
+    Signal 'approved' if PR is good.
+    Signal 'needs_discussion' if requires team input.
+    
+  tools: [grep, read_file, bash]
+  edges:
+    - target: request_changes
+      when: { signal: needs_changes }
+    - target: generate_feedback
+      when: { signal: approved }
+    - target: generate_feedback
+      when: { signal: needs_discussion }
+
+# Request changes for issues
+request_changes:
+  prompt: |
+    List the changes required for this PR.
+    
+    For each issue provide:
+    - File and line
+    - Current issue
+    - Suggested fix
+    
+    Organize by severity:
+    - Blocking (must fix)
+    - Important (should fix)
+    - Nice to have (consider fixing)
+    
+    Signal 'done' when list is complete.
+    
+  tools: [read_file, grep]
+  edges:
+    - target: finalize
+      when: { signal: done }
+
+# Generate review feedback
+generate_feedback:
+  prompt: |
+    Generate comprehensive review feedback.
+    
+    Include:
+    - Summary of changes
+    - What was done well
+    - Issues found (if any)
+    - Suggestions for improvement
+    - Approval status
+    
+    Format as structured review comment.
+    
+  tools: [bash, read_file]
+  edges:
+    - target: finalize
+      when: { signal: ready }
+
+# Finalize review
+finalize:
+  prompt: |
+    Finalize the review output.
+    
+    Provide:
+    - Overall verdict (Approve / Request Changes / Needs Discussion)
+    - Summary of key points
+    - Follow-up items
+    
+    Format as final markdown report.
+    
+  tools: [bash]
+  # no edges = terminal

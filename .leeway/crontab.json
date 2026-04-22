@@ -1,0 +1,15 @@
+{
+  "schedules": [
+    {
+      "id": "6302b73f",
+      "name": "daily-health-check",
+      "workflow_name": "code-health",
+      "cron_expression": "0 9 * * *",
+      "enabled": true,
+      "user_context": "Run daily health check",
+      "next_run": "2026-04-22T07:00:00Z",
+      "last_run": null,
+      "created_at": "2026-04-22T06:20:28.270963Z"
+    }
+  ]
+}

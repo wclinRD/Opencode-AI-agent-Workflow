@@ -1,0 +1,8 @@
+edges:
+- target: end
+  when:
+    always: true
+name: test-wf
+prompt: Test workflow
+tools:
+- glob

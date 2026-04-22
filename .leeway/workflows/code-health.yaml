@@ -1,0 +1,122 @@
+# Code Health Check Workflow
+# Tests all 5 node patterns: linear, branch, loop, terminal, parallel
+
+name: code-health
+description: Scan and analyze codebase structure, quality, and issues
+
+# Start node (Linear pattern)
+scan:
+  prompt: |
+    You are a code scanning agent. Scan the project structure in {cwd}.
+    
+    Use glob to find all source files:
+    - Find all Python files (*.py)
+    - Find all TypeScript files (*.ts, *.tsx)
+    - Find all configuration files (pyproject.toml, package.json, tsconfig.json)
+    
+    List the key directories and their purposes.
+    
+    When done, signal 'ready' to proceed to triage.
+    
+  tools: [glob, bash, read_file]
+  edges:
+    - target: triage
+      when: { signal: ready }
+
+# Branch pattern - different paths based on scan results
+triage:
+  prompt: |
+    Analyze the codebase structure you discovered.
+    
+    Identify:
+    - Well-documented modules (signal: well_documented)
+    - Areas needing investigation (signal: needs_investigation)
+    - Trivial or empty modules (signal: trivial)
+    
+    Be thorough in your analysis.
+    
+  edges:
+    - target: deep_dive
+      when: { signal: needs_investigation }
+    - target: summarize
+      when: { signal: well_documented }
+    - target: summarize
+      when: { signal: trivial }
+
+# Loop pattern - iterate until enough information gathered
+deep_dive:
+  prompt: |
+    Read the key files in areas that need investigation.
+    
+    Use grep to find:
+    - TODO comments
+    - FIXME comments
+    - Security-related patterns (passwords, keys, tokens)
+    - Error handling patterns
+    
+    Summarize your findings.
+    
+    If you need more information, signal 'dig_deeper' to loop.
+    If you have enough, signal 'enough' to proceed.
+    
+  tools: [grep, read_file, bash]
+  edges:
+    - target: deep_dive
+      when: { signal: dig_deeper }
+    - target: report
+      when: { signal: enough }
+
+# Parallel pattern - run concurrent branches
+review:
+  parallel:
+    branches:
+      quality:
+        when: { always: true }
+        prompt: |
+          Review code quality:
+          - Code complexity
+          - Naming conventions
+          - Function sizes
+          - Documentation
+        tools: [glob, bash]
+      security:
+        when: { signal: needs_investigation }
+        prompt: |
+          Security audit:
+          - Input validation
+          - SQL injection risks
+          - XSS risks
+          - Secrets exposure
+        tools: [grep, read_file]
+  edges:
+    - target: report
+      when: { always: true }
+
+# Terminal node - no outgoing edges
+summarize:
+  prompt: |
+    Create a concise summary of the codebase structure.
+    
+    Include:
+    - Directory structure overview
+    - Key modules and their purposes
+    - File counts by type
+    
+    This is a terminal node - no further nodes will execute.
+    
+  tools: [glob, bash]
+  # no edges = terminal
+
+# Another terminal for the final report
+report:
+  prompt: |
+    Generate a final code health report.
+    
+    Include:
+    - Summary of findings from all previous nodes
+    - Issue list prioritized by severity
+    - Recommendations
+    
+    Format as markdown.
+    
+  tools: [glob, grep, bash]

@@ -1,0 +1,68 @@
+# Multi-MCP Workflow
+# Demonstrates using multiple MCP servers (GitHub, Filesystem, Brave Search)
+
+name: research-assistant
+description: Multi-source research using GitHub, Filesystem, and Web Search
+
+# Start - gather initial context
+gather_context:
+  prompt: |
+    You are a research assistant that combines multiple data sources.
+    
+    User request: {user_context}
+    
+    Use these MCP tools to gather information:
+    1. GitHub MCP - search for relevant code/examples
+    2. Filesystem MCP - check local files for context
+    3. Brave Search MCP - search the web for additional context
+    
+    First, ensure all MCP servers are available.
+    
+    When complete, signal 'context_gathered'.
+    
+  edges:
+    - target: analyze
+      when: { signal: context_gathered }
+
+# Analyze gathered information
+analyze:
+  prompt: |
+    Analyze all the information you gathered from multiple sources.
+    
+    Identify:
+    - What was found in local files
+    - What was found on GitHub
+    - What was found via web search
+    
+    Look for:
+    - Consistency across sources
+    - Gaps in information
+    - Conflicting information
+    
+    Signal 'analysis_complete' when done.
+    
+  edges:
+    - target: report
+      when: { signal: analysis_complete }
+
+# Terminal - final report
+report:
+  prompt: |
+    Generate a comprehensive research report.
+    
+    Organize by source:
+    ## Local Files
+    [Summary of local file findings]
+    
+    ## GitHub
+    [Summary of GitHub search results]
+    
+    ## Web Search
+    [Summary of web search results]
+    
+    ## Synthesis
+    [Combined analysis and conclusions]
+    
+    Format as a well-structured markdown document.
+    
+  # no edges = terminal

@@ -1,0 +1,39 @@
+{
+  "api_key": "",
+  "base_url": "http://localhost:8080",
+  "model": "Qwen3.5-4B-UD-Q4_K_XL",
+  "permission_mode": "default",
+  "workflows_dir": ".leeway/workflows",
+  "skills_dir": ".leeway/skills",
+  "max_turns": 50,
+  "max_tokens": 16384,
+  "verbose": false,
+  "mcp_servers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/wclin/project"]
+    }
+  },
+  "llm_providers": {
+    "llama-cpp": {
+      "display_name": "Llama.cpp Server",
+      "description": "Run GGUF models via llama.cpp server",
+      "api_key_env": "",
+      "default_model": "llama-7b",
+      "base_url": "http://localhost:8080"
+    },
+    "anthropic": {
+      "display_name": "Anthropic Claude",
+      "description": "Claude 3.5 Sonnet, Opus, Haiku models",
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "default_model": "claude-3-5-sonnet-20241022"
+    }
+  }
+}

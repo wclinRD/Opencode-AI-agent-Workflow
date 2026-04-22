@@ -1,0 +1,83 @@
+{
+  "tools": [
+    {
+      "id": "f11ca3f2",
+      "name": "calculate",
+      "description": "A simple calculator tool",
+      "parameters": [
+        {
+          "name": "operation",
+          "type": "string",
+          "description": "Operation to perform",
+          "required": true,
+          "default": null
+        },
+        {
+          "name": "a",
+          "type": "number",
+          "description": "First number",
+          "required": true,
+          "default": null
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "Second number",
+          "required": false,
+          "default": null
+        }
+      ],
+      "code": "\ndef execute(operation: str, a: float, b: float = 0) -> dict:\n    if operation == 'add':\n        return {'result': a + b}\n    return {'error': 'Unknown operation'}\n",
+      "version": "1.0.0",
+      "author": null,
+      "tags": [
+        "math",
+        "calculator"
+      ],
+      "enabled": true,
+      "created_at": "2026-04-22T07:13:14.451471Z",
+      "updated_at": null
+    },
+    {
+      "id": "e634e2a4",
+      "name": "greet",
+      "description": "A greeting tool",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Name to greet",
+          "required": true,
+          "default": null
+        },
+        {
+          "name": "greeting",
+          "type": "string",
+          "description": "Greeting word",
+          "required": false,
+          "default": null
+        }
+      ],
+      "code": "\ndef execute(name: str, greeting: str = \"Hello\") -> dict:\n    return {\"message\": f\"{greeting}, {name}!\"}\n",
+      "version": "1.0.0",
+      "author": null,
+      "tags": [],
+      "enabled": true,
+      "created_at": "2026-04-22T07:13:22.920282Z",
+      "updated_at": null
+    },
+    {
+      "id": "d638713a",
+      "name": "hello",
+      "description": "A hello world tool",
+      "parameters": [],
+      "code": "\ndef execute(name: str = \"World\") -> dict:\n    return {\"message\": f\"Hello, {name}!\"}\n",
+      "version": "1.0.0",
+      "author": null,
+      "tags": [],
+      "enabled": true,
+      "created_at": "2026-04-22T07:14:13.232347Z",
+      "updated_at": null
+    }
+  ]
+}

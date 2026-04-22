@@ -1,0 +1,95 @@
+# API Design Review Workflow
+# Analyzes API design, checks for RESTful best practices, generates documentation
+
+name: api-design
+description: Review API design and generate documentation
+
+# Start by finding API files
+discover:
+  prompt: |
+    Find all API-related files in {cwd}.
+    
+    Use glob to find:
+    - Route handlers (*Routes.py, *_router.py, routes.js)
+    - API definitions (openapi.yaml, swagger.json, api_spec.py)
+    - Request/Response models (*Schema.py, *Model.ts)
+    
+    List the file paths and their purposes.
+    
+    Signal 'ready' when you have a complete list.
+    
+  tools: [glob, bash, read_file]
+  edges:
+    - target: analyze
+      when: { signal: ready }
+
+# Analyze API structure
+analyze:
+  prompt: |
+    Analyze the API structure you discovered.
+    
+    Identify:
+    - RESTful endpoints (GET, POST, PUT, DELETE patterns)
+    - Request/Response schemas
+    - Authentication methods
+    - Error handling patterns
+    
+    Look for:
+    - Proper HTTP method usage
+    - URL naming conventions
+    - Status code usage
+    - Pagination patterns
+    
+    Signal 'needs_review' if issues found.
+    Signal 'well_designed' if looks good.
+    Signal 'needs_docs' if documentation is missing.
+    
+  tools: [glob, grep, read_file]
+  edges:
+    - target: review
+      when: { signal: needs_review }
+    - target: document
+      when: { signal: well_designed }
+    - target: document
+      when: { signal: needs_docs }
+
+# Deep review for issues found
+review:
+  prompt: |
+    Perform a detailed review of API design issues.
+    
+    Focus on:
+    - RESTful convention violations
+    - Security concerns
+    - Performance issues
+    - Inconsistent patterns
+    
+    Document each issue with:
+    - File location
+    - Current implementation
+    - Recommended fix
+    
+    Signal 'done' when review is complete.
+    
+  tools: [grep, read_file, bash]
+  edges:
+    - target: document
+      when: { signal: done }
+
+# Generate documentation
+document:
+  prompt: |
+    Generate API documentation based on your analysis.
+    
+    Include:
+    - Endpoint summary table
+    - Request/Response examples
+    - Authentication requirements
+    - Error codes
+    
+    Format as Markdown (OpenAPI style).
+    
+    This is a terminal node.
+    
+  tools: [glob, read_file, bash]
+  # no edges = terminal
